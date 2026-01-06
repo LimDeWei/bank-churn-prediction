@@ -7,5 +7,4 @@ streamlit
 imbalanced-learn
 joblib
 xgboost
-shap
 joblit

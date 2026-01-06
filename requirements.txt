@@ -6,5 +6,5 @@ seaborn
 streamlit
 imbalanced-learn
 joblib
-xgboost
+xgboost==1.7.6
 joblit

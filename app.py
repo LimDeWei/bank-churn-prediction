@@ -1,11 +1,13 @@
 import streamlit as st
-import joblib
 import json
 import numpy as np
 import pandas as pd
+from xgboost import XGBClassifier
 
 # Load model & threshold
-model = joblib.load("model/xgb_churn_model.pkl")
+model = XGBClassifier()
+model.load_model("model/xgb_churn_model.json")
+
 with open("model/config.json") as f:
     threshold = json.load(f)["threshold"]
 

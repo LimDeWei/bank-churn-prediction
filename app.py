@@ -3,6 +3,12 @@ import json
 import numpy as np
 import pandas as pd
 from xgboost import XGBClassifier
+import shap
+import matplotlib.pyplot as plt
+
+@st.cache_resource
+def get_shap_explainer(_model):
+    return shap.Explainer(_model)
 
 # Load model & threshold
 model = XGBClassifier()
@@ -69,10 +75,13 @@ input_data = pd.DataFrame([{
     "Geography_Spain": geo_spain,
 }])[FEATURE_COLUMNS]
 
-
 st.divider()
 
+show_explanation = st.toggle("Explain prediction (SHAP)")
+
 if st.button("Predict Churn Risk"):
+    
+    #Prediction
     prob = model.predict_proba(input_data)[0, 1]
     prediction = int(prob >= threshold)
 
@@ -82,4 +91,24 @@ if st.button("Predict Churn Risk"):
         st.error("High Risk of Churn")
     else:
         st.success("Low Risk of Churn")
+     
+    #Explanation    
+    if show_explanation:
+        
+        explainer = get_shap_explainer(model)
+        shap_values = explainer(input_data)
+
+        with st.expander("📊 Why this prediction?", expanded=True):
+            st.markdown(
+                """
+                This chart shows how each feature contributed to the churn prediction.
+                
+                - **Red bars** → increase churn risk  
+                - **Blue bars** → reduce churn risk  
+                - Bar length = strength of impact
+                """
+            )
+        shap.plots.waterfall(shap_values[0], show=False)
+        st.pyplot(plt.gcf())
+        plt.clf()
 

@@ -109,6 +109,7 @@ if st.button("Predict Churn Risk"):
                 """
             )
         shap.plots.waterfall(shap_values[0], show=False)
-        st.pyplot(plt.gcf())
-        plt.clf()
+        fig = plt.gcf()
+        st.pyplot(fig, bbox_inches="tight")
+        plt.close(fig)
 

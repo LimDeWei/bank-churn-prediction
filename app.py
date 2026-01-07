@@ -12,6 +12,7 @@ with open("model/config.json") as f:
     threshold = json.load(f)["threshold"]
 
 st.title("Bank Customer Churn Prediction")
+st.caption("Predict whether a customer is likely to churn")
 
 FEATURE_COLUMNS = [
     "CreditScore",
@@ -28,12 +29,17 @@ FEATURE_COLUMNS = [
 ]
 
 # User inputs
-credit_score = st.slider("Credit Score", 300, 850, 650)
-age = st.slider("Age", 18, 100, 40)
-tenure = st.slider("Tenure (Years)", 0, 10, 5)
-balance = st.number_input("Balance", 0.0, 300000.0, 50000.0)
-num_products = st.slider("Number of Products", 1, 4, 2)
-estimated_salary = st.number_input("Estimated Salary", 0.0, 200000.0, 50000.0)
+col1, col2 = st.columns(2)
+
+with col1:
+    credit_score = st.slider("Credit Score", 300, 850, 650)
+    age = st.slider("Age", 18, 100, 40)
+    tenure = st.slider("Tenure (Years)", 0, 10, 5)
+
+with col2:
+    balance = st.number_input("Balance", 0.0, 300000.0, 50000.0)
+    estimated_salary = st.number_input("Estimated Salary", 0.0, 200000.0, 50000.0)
+    num_products = st.slider("Number of Products", 1, 4, 2)
 
 is_active = st.selectbox("Active Member", [0, 1])
 has_card = st.selectbox("Has Credit Card", [0, 1])
@@ -64,13 +70,16 @@ input_data = pd.DataFrame([{
 }])[FEATURE_COLUMNS]
 
 
-if st.button("Predict"):
+st.divider()
+
+if st.button("Predict Churn Risk"):
     prob = model.predict_proba(input_data)[0, 1]
     prediction = int(prob >= threshold)
 
-    st.write(f"### Churn Probability: {prob:.2f}")
+    st.metric("Churn Probability", f"{prob:.2%}")
 
-    if prediction == 1:
-        st.error("⚠️ High Risk of Churn")
+    if prediction:
+        st.error("High Risk of Churn")
     else:
-        st.success("✅ Low Risk of Churn")
+        st.success("Low Risk of Churn")
+

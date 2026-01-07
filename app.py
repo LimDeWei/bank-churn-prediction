@@ -97,6 +97,31 @@ if st.button("Predict Churn Risk"):
         
         explainer = get_shap_explainer(model)
         shap_values = explainer(input_data)
+            
+        # --- Top 3 reasons (text explanation) ---
+        shap_vals = shap_values[0].values
+        feature_names = input_data.columns
+
+        # Create dataframe of SHAP values
+        shap_df = pd.DataFrame({
+            "feature": feature_names,
+            "shap_value": shap_vals,
+            "abs_shap": np.abs(shap_vals)
+        })
+
+        # Get top 3 most impactful features
+        top_reasons = shap_df.sort_values("abs_shap", ascending=False).head(3)
+        
+        st.markdown("### Top factors influencing this prediction:")
+
+        for _, row in top_reasons.iterrows():
+            feature = row["feature"]
+            value = row["shap_value"]
+
+            if value > 0:
+                st.markdown(f"- 🔴 **{feature}** increased churn risk")
+            else:
+                st.markdown(f"- 🔵 **{feature}** reduced churn risk")
 
         with st.expander("📊 Why this prediction?", expanded=True):
             st.markdown(
@@ -108,6 +133,7 @@ if st.button("Predict Churn Risk"):
                 - Bar length = strength of impact
                 """
             )
+
         shap.plots.waterfall(shap_values[0], show=False)
         fig = plt.gcf()
         st.pyplot(fig, bbox_inches="tight")

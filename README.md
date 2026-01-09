@@ -104,6 +104,19 @@ This project emphasizes explainable AI, answering the question:
 To address this, SHAP (SHapley Additive exPlanations) was used to interpret
 individual predictions and highlight the contribution of each feature.
 
+
+### Interpreting Non-Intuitive Feature Effects
+During model interpretation, some features exhibit non-linear or counter-intuitive behavior.
+
+For example, an increase in the **Number of Products** may lead to a higher churn risk, even for customers who are marked as active members. This behavior reflects patterns learned directly from historical data rather than assumptions about customer loyalty.
+
+Exploratory analysis of the dataset shows that customers holding **three or more products** tend to have a higher churn rate than those with one or two products. This may indicate over-selling, account complexity or increased sensitivity to service quality and fees.
+
+Tree-based models such as XGBoost capture these interactions through conditional splits, meaning that small changes in a feature can move a customer into a different decision path with significantly different risk estimates.
+
+SHAP values make these effects transparent by showing how each feature contributes positively or negatively to the final prediction.
+
+
 ### Explainability Features
 - SHAP waterfall plot for individual predictions
 - Top 3 influencing factors (text explanation):

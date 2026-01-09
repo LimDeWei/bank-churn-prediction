@@ -123,7 +123,7 @@ if st.button("Predict Churn Risk"):
             else:
                 st.markdown(f"- 🔵 **{feature}** reduced churn risk")
 
-        with st.expander("📊 Why this prediction?", expanded=True):
+        with st.expander("Why this prediction?", expanded=True):
             st.markdown(
                 """
                 This chart shows how each feature contributed to the churn prediction.
